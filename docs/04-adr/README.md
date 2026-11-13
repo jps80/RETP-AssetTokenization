@@ -8,7 +8,7 @@
 | ADR-004 | Separación Capital Management / Token Management | Aceptada |
 | ADR-005 | RabbitMQ + Transactional Outbox | Aceptada |
 | ADR-006 | DebtFacility separado del cap table | Aceptada |
-| ADR-007 | ERC-3643 como estándar | Aceptada |
+| ADR-007 | ERC-3643 como estándar objetivo | Aceptada |
 | ADR-008 | Token como espejo técnico auxiliar | Aceptada |
 | ADR-009 | Firma aislada, policy engine y maker-checker | Aceptada; viabilidad técnica pendiente |
 | ADR-010 | Anvil primero, Sepolia después | Aceptada |
