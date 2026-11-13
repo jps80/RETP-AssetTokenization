@@ -41,6 +41,7 @@ Aprender el ecosistema desde los fundamentos financieros, jurídicos y operativo
 - [Visión de dominio](docs/01-domain/domain-overview.md)
 - [Modelo financiero](docs/01-domain/financial-model.md)
 - [Especificación v0.3](docs/02-specifications/retp-v0.3-capital-token-issuance.md)
+- [Modelo de datos v0.3](docs/02-specifications/data-model-v0.3.md)
 - [Arquitectura](docs/03-architecture/architecture-overview.md)
 - [Frontera de integración contractual](docs/03-architecture/contract-integration-boundary.md)
 - [Registro ADR](docs/04-adr/README.md)
