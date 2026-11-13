@@ -31,11 +31,11 @@ En v0.3 estos límites se implementarán principalmente como módulos de un mono
 
 ## Entidades principales
 
-`PropertySPV`, `CapitalStructure`, `CapitalClass`, `CapitalEvent`, `Investor`, `Wallet`, `Subscription`, `Allocation`, `LegalEvidence`, `DebtFacility`, `TokenIssuance`, `TokenAllocation`, `TokenDeployment`, `OnchainIdentity`, `Claim`, `TokenTransaction`, `Reconciliation` y `AuditEvent`.
+`PropertySPV`, `CapitalStructure`, `CapitalClass`, `CapitalEvent`, `Investor`, `Wallet`, `Subscription`, `Allocation`, `LegalEvidence`, `CorporateRegisterUpdate`, `DebtFacility`, `TokenIssuance`, `TokenAllocation`, `TokenDeployment`, `OnchainIdentity`, `Claim`, `BlockchainTransaction`, `Reconciliation` y `AuditEvent`.
 
 ## Invariantes
 
-1. Las asignaciones no superan las unidades autorizadas.
+1. Las asignaciones no superan las participaciones legalmente creadas y disponibles.
 2. Una asignación requiere evidencia y aprobación conforme a la política societaria definida.
 3. Antes de tokenizar, Corporate Registry debe registrar la formalización y actualización del Libro Registro de Socios.
 4. Una TokenAllocation referencia una asignación societaria aprobada y registrada.
@@ -50,7 +50,7 @@ En v0.3 estos límites se implementarán principalmente como módulos de un mono
 ## Estados separados
 
 Suscripción:
-`DRAFT → SUBMITTED → COMPLIANCE_PENDING → COMPLIANCE_APPROVED → PAYMENT_PENDING → PAYMENT_CONFIRMED → CORPORATE_APPROVAL_PENDING → CORPORATE_APPROVED → ALLOCATION_PENDING → ALLOCATED → CORPORATE_REGISTER_UPDATE_PENDING → CORPORATE_REGISTER_UPDATED`.
+`DRAFT → SUBMITTED → COMPLIANCE_PENDING → COMPLIANCE_APPROVED → PAYMENT_PENDING → PAYMENT_CONFIRMED → CORPORATE_APPROVAL_PENDING → CORPORATE_APPROVED → CORPORATE_FORMALITIES_PENDING → CORPORATE_FORMALIZED → CORPORATE_REGISTER_UPDATE_PENDING → CORPORATE_REGISTER_UPDATED → ALLOCATION_PENDING → ALLOCATED`.
 
 Emisión:
 `DRAFT → VALIDATED → APPROVED → DEPLOYMENT_PENDING → DEPLOYED → IDENTITY_SETUP_PENDING → IDENTITIES_READY → MINT_PENDING → MINT_SUBMITTED → MINT_CONFIRMED → RECONCILIATION_PENDING → RECONCILED`.
