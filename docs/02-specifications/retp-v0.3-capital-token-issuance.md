@@ -127,7 +127,7 @@ FR-001 crear SPV; FR-002 configurar clase; FR-003 registrar inversores/wallets; 
 
 Entidades candidatas: PropertySPV, CapitalStructure, CapitalClass, CapitalEvent, Investor, Wallet, Subscription, Allocation, LegalEvidence, CorporateRegisterUpdate, DebtFacility, TokenIssuance, TokenAllocation, TokenDeployment, TokenContract, OnchainIdentity, Claim, BlockchainTransaction, Reconciliation y AuditEvent.
 
-Endpoints orientativos: `POST /spvs`, `GET /spvs/:id`, `POST /spvs/:id/capital-classes`, `POST /spvs/:id/capital-events`, `POST /subscriptions`, `POST /subscriptions/:id/submit`, `POST /subscriptions/:id/payment-confirmation`, `POST /subscriptions/:id/approve-allocation`, `GET /spvs/:id/capitalization-table`, `POST /spvs/:id/token-deployments`, `POST /token-issuances`, `POST /token-issuances/:id/validate`, `POST /token-issuances/:id/approve`, `POST /token-issuances/:id/execute`, `GET /token-issuances/:id` y `POST /token-issuances/:id/reconcile`.
+Endpoints orientativos: `POST /spvs`, `GET /spvs/:id`, `POST /spvs/:id/capital-classes`, `POST /spvs/:id/capital-events`, `POST /subscriptions`, `POST /subscriptions/:id/submit`, `POST /subscriptions/:id/payment-confirmation`, `POST /subscriptions/:id/approve-allocation`, `POST /spvs/:id/corporate-register-updates`, `POST /corporate-register-updates/:id/complete`, `GET /spvs/:id/capitalization-table`, `POST /spvs/:id/token-deployments`, `POST /token-issuances`, `POST /token-issuances/:id/validate`, `POST /token-issuances/:id/approve`, `POST /token-issuances/:id/execute`, `GET /token-issuances/:id` y `POST /token-issuances/:id/reconcile`.
 
 Son propuestas, no APIs implementadas.
 
