@@ -72,15 +72,16 @@ En cualquier caso, las reglas societarias, la asignación autorizada, el control
 3. Validar unidades, importes y límites.
 4. Registrar pago de laboratorio.
 5. Registrar aprobación societaria simulada y evidencia.
-6. Aprobar asignaciones.
-7. Validar identidad y elegibilidad.
-8. Desplegar/configurar T-REX.
-9. Vincular ONCHAINID y wallet.
-10. Emitir claims sintéticos desde Trusted Issuer.
-11. Preparar mint y someterlo a policy.
-12. Obtener maker-checker.
-13. Firmar y enviar transacción.
-14. Confirmar y registrar receipt/eventos.
+6. Completar las formalidades societarias simuladas y registrar la actualización del Libro Registro de Socios en Corporate Registry.
+7. Aprobar/cerrar las asignaciones que reflejan el registro actualizado.
+8. Validar identidad y elegibilidad.
+9. Desplegar/configurar T-REX.
+10. Vincular ONCHAINID y wallet.
+11. Emitir claims sintéticos desde Trusted Issuer.
+12. Preparar mint y someterlo a policy.
+13. Obtener maker-checker.
+14. Firmar y enviar transacción.
+15. Confirmar y registrar receipt/eventos.
 16. Conciliar asignaciones y saldos.
 17. Cerrar técnicamente solo si se cumplen los criterios.
 
@@ -88,9 +89,9 @@ En cualquier caso, las reglas societarias, la asignación autorizada, el control
 
 - Una suscripción pagada no crea automáticamente una participación.
 - Una asignación sin evidencia/aprobación y sin constancia de actualización del Libro Registro de Socios no inicia mint.
-- Una TokenAllocation debe referenciar Allocation aprobada.
+- Una TokenAllocation debe referenciar Allocation aprobada y actualizada en Corporate Registry.
 - Solo identidades elegibles reciben tokens.
-- El total acuñado no supera el autorizado.
+- El total acuñado no supera las participaciones legalmente creadas y registradas.
 - La idempotency key impide mint duplicado.
 - Timeout exige consulta de red antes de reintento.
 - La deuda no forma parte del cap table.
@@ -106,7 +107,7 @@ FR-001 crear SPV; FR-002 configurar clase; FR-003 registrar inversores/wallets; 
 
 - AC-001 creación de SPV con una clase ordinaria.
 - AC-002 rechazo de asignaciones superiores al límite autorizado.
-- AC-003 bloqueo de mint sin evidencia/aprobación y sin actualización registrada del Libro Registro de Socios.
+- AC-003 bloqueo de mint sin evidencia/aprobación.
 - AC-004 rechazo de inversor no elegible.
 - AC-005 registro de chain ID y direcciones desplegadas.
 - AC-006 asociación de mint con Allocation e idempotency key.
@@ -123,7 +124,7 @@ FR-001 crear SPV; FR-002 configurar clase; FR-003 registrar inversores/wallets; 
 
 ## Persistencia y API
 
-Entidades candidatas: PropertySPV, CapitalStructure, CapitalClass, CapitalEvent, Investor, Wallet, Subscription, Allocation, LegalEvidence, DebtFacility, TokenIssuance, TokenAllocation, TokenDeployment, TokenContract, OnchainIdentity, Claim, TokenTransaction, Reconciliation y AuditEvent.
+Entidades candidatas: PropertySPV, CapitalStructure, CapitalClass, CapitalEvent, Investor, Wallet, Subscription, Allocation, LegalEvidence, CorporateRegisterUpdate, DebtFacility, TokenIssuance, TokenAllocation, TokenDeployment, TokenContract, OnchainIdentity, Claim, BlockchainTransaction, Reconciliation y AuditEvent.
 
 Endpoints orientativos: `POST /spvs`, `GET /spvs/:id`, `POST /spvs/:id/capital-classes`, `POST /spvs/:id/capital-events`, `POST /subscriptions`, `POST /subscriptions/:id/submit`, `POST /subscriptions/:id/payment-confirmation`, `POST /subscriptions/:id/approve-allocation`, `GET /spvs/:id/capitalization-table`, `POST /spvs/:id/token-deployments`, `POST /token-issuances`, `POST /token-issuances/:id/validate`, `POST /token-issuances/:id/approve`, `POST /token-issuances/:id/execute`, `GET /token-issuances/:id` y `POST /token-issuances/:id/reconcile`.
 
