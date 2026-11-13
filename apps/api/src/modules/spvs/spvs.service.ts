@@ -14,8 +14,8 @@ export class SpvsService {
     if (!nominalValue.isFinite() || nominalValue.lte(0)) {
       throw new ConflictException('nominalValue must be greater than zero');
     }
-    if (units <= 0n) {
-      throw new ConflictException('legallyCreatedUnits must be greater than zero');
+    if (units <= 0n || units > 9223372036854775807n) {
+      throw new ConflictException('legallyCreatedUnits must fit a positive PostgreSQL BIGINT');
     }
 
     try {
