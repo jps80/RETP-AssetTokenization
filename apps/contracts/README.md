@@ -112,6 +112,20 @@ This first deployment is a technical smoke deployment only:
 4. Read-only calls confirm that the token points to the deployed Identity Registry and Compliance proxy.
 5. The deployment manifest records source commit, compiler settings, chain ID and addresses.
 
+Verify the token's registry and compliance bindings using the generated manifest:
+
+```bash
+TOKEN=$(jq -r '.token' deployments/anvil-31337.json)
+EXPECTED_IR=$(jq -r '.identityRegistry' deployments/anvil-31337.json)
+EXPECTED_COMPLIANCE=$(jq -r '.compliance' deployments/anvil-31337.json)
+
+cast call "$TOKEN" 'identityRegistry()(address)' --rpc-url http://127.0.0.1:8545
+cast call "$TOKEN" 'compliance()(address)' --rpc-url http://127.0.0.1:8545
+cast call "$TOKEN" 'paused()(bool)' --rpc-url http://127.0.0.1:8545
+```
+
+The first two returned addresses must match `EXPECTED_IR` and `EXPECTED_COMPLIANCE`; `paused()` should initially return `true`. These are read-only checks and do not unpause the token.
+
 The next iteration adds Foundry tests for identity eligibility, mint authorization, transfer restrictions, pause/freeze and invariant properties. Minting the 14,000 scenario units remains prohibited until RETP's Corporate Registry and Token Management authorization workflow exists.
 
 ## 7. License boundary
