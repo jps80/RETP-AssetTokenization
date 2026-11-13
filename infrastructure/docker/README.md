@@ -17,7 +17,7 @@ SoftHSM2 se inicia bajo el perfil opcional `signing-lab`. Es una implementación
 
 - Docker Engine con Docker Compose v2.
 - Acceso al registro de imágenes GHCR y Docker Hub.
-- Puertos locales disponibles: 5432, 5672, 15672 y 8545.
+- Puertos locales disponibles: 5433, 5672, 15672 y 8545.
 
 ## Preparación
 
@@ -54,9 +54,11 @@ Anvil expone JSON-RPC en `http://127.0.0.1:8545` y usa chain ID `31337`. Sus cue
 
 ## Conexiones para aplicaciones ejecutadas en el host
 
-- PostgreSQL: `postgresql://retp:<POSTGRES_PASSWORD>@localhost:5432/retp?schema=public`
+- PostgreSQL RETP: `postgresql://retp:<POSTGRES_PASSWORD>@localhost:5433/retp?schema=public`
 - RabbitMQ: `amqp://retp:<RABBITMQ_DEFAULT_PASS>@localhost:5672`
 - Anvil: `http://127.0.0.1:8545`
+
+El contenedor PostgreSQL de RETP se llama `retp-postgres-v03` y publica el puerto host `5433` hacia el puerto interno `5432`. Usa un volumen dedicado llamado `retp_postgres_data`. Esto permite que conviva con una instancia PostgreSQL preexistente que utilice el puerto host `5432`, sin detenerla ni reutilizar sus datos.
 
 Dentro de una red Compose, los hostnames son `postgres`, `rabbitmq` y `anvil`, y los puertos internos son 5432, 5672 y 8545.
 
