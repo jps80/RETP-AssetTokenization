@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SpvStatus {
+  DRAFT
+  ACTIVE
+  BLOCKED
+  ARCHIVED
+}
+
+enum CapitalEventType {
+  INITIAL_ISSUANCE
+}
+
+enum CapitalEventStatus {
+  DRAFT
+  VALIDATED
+  APPROVED
+  EXECUTED
+  CANCELLED
+}
+
+model PropertySPV {
+  id               String           @id @default(uuid()) @db.Uuid
+  code             String           @unique @db.VarChar(32)
+  name             String           @db.VarChar(160)
+  jurisdiction     String           @default("ES") @db.VarChar(2)
+  legalForm        String           @default("SL") @db.VarChar(16)
+  status           SpvStatus        @default(DRAFT)
+  capitalStructure CapitalStructure?
+  capitalEvents    CapitalEvent[]
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  @@map("property_spvs")
+}
+
+model CapitalStructure {
+  id        String        @id @default(uuid()) @db.Uuid
+  spvId     String        @unique @db.Uuid
+  currency  String        @default("EUR") @db.VarChar(3)
+  spv       PropertySPV   @relation(fields: [spvId], references: [id], onDelete: Restrict)
+  classes   CapitalClass[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@map("capital_structures")
+}
+
+model CapitalClass {
+  id                 String          @id @default(uuid()) @db.Uuid
+  capitalStructureId String          @db.Uuid
+  code               String          @db.VarChar(24)
+  name               String          @db.VarChar(120)
+  nominalValue       Decimal         @db.Decimal(20, 2)
+  currency           String          @default("EUR") @db.VarChar(3)
+  isActive           Boolean         @default(true)
+  capitalStructure   CapitalStructure @relation(fields: [capitalStructureId], references: [id], onDelete: Restrict)
+  capitalEvents      CapitalEvent[]
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  @@unique([capitalStructureId, code])
+  @@index([capitalStructureId])
+  @@map("capital_classes")
+}
+
+model CapitalEvent {
+  id                String             @id @default(uuid()) @db.Uuid
+  spvId             String             @db.Uuid
+  capitalClassId    String             @db.Uuid
+  eventType         CapitalEventType   @default(INITIAL_ISSUANCE)
+  legallyCreatedUnits BigInt
+  status            CapitalEventStatus @default(DRAFT)
+  effectiveDate     DateTime?
+  spv               PropertySPV        @relation(fields: [spvId], references: [id], onDelete: Restrict)
+  capitalClass      CapitalClass       @relation(fields: [capitalClassId], references: [id], onDelete: Restrict)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([spvId, status])
+  @@map("capital_events")
+}
