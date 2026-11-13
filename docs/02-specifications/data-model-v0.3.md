@@ -27,10 +27,10 @@ Principios:
 | Agregado | Raíz | Responsabilidad |
 |---|---|---|
 | SPV | PropertySPV | Vehículo y relación con capital |
-| Capital | CapitalEvent | Operación de capital y unidades autorizadas |
+| Capital | CapitalEvent | Operación societaria y participaciones legalmente creadas |
 | Suscripción | Subscription | Compromiso económico del inversor |
 | Asignación | Allocation | Unidades societarias aprobadas |
-| Identidad | InvestorIdentity | Wallet, ONCHAINID y claims por red |
+| Identidad | OnchainIdentity | Identidad on-chain, wallet y claims por red |
 | Deployment | TokenDeployment | Despliegue de una suite en una red |
 | Emisión | TokenIssuance | Orden de emisión digital |
 | Transacción | BlockchainTransaction | Envío y confirmación EVM |
@@ -108,7 +108,7 @@ No incluir nombre legal, documento identificativo, domicilio o fecha de nacimien
 - `id`, `spvId`, `capitalClassId`.
 - `eventType`: INITIAL_ISSUANCE en v0.3.
 - `legallyCreatedUnits`: BigInt positivo, derivado del acto societario que crea las participaciones; no representa una autorización abstracta de capital.
-- `allocatedUnits`: BigInt calculado desde las asignaciones aprobadas; no se mantiene como dato maestro duplicado.
+- Las unidades asignadas se derivan de Allocation; no se mantiene un contador duplicado sin mecanismo transaccional de consistencia.
 - `status`: DRAFT / VALIDATED / APPROVED / EXECUTED / CANCELLED.
 - `effectiveDate`, timestamps.
 
