@@ -119,9 +119,13 @@ TOKEN=$(jq -r '.token' deployments/anvil-31337.json)
 EXPECTED_IR=$(jq -r '.identityRegistry' deployments/anvil-31337.json)
 EXPECTED_COMPLIANCE=$(jq -r '.compliance' deployments/anvil-31337.json)
 
-cast call "$TOKEN" 'identityRegistry()(address)' --rpc-url http://127.0.0.1:8545
-cast call "$TOKEN" 'compliance()(address)' --rpc-url http://127.0.0.1:8545
-cast call "$TOKEN" 'paused()(bool)' --rpc-url http://127.0.0.1:8545
+ACTUAL_IR=$(cast call "$TOKEN" 'identityRegistry()(address)' --rpc-url http://127.0.0.1:8545)
+ACTUAL_COMPLIANCE=$(cast call "$TOKEN" 'compliance()(address)' --rpc-url http://127.0.0.1:8545)
+PAUSED=$(cast call "$TOKEN" 'paused()(bool)' --rpc-url http://127.0.0.1:8545)
+
+test "${ACTUAL_IR,,}" = "${EXPECTED_IR,,}"
+test "${ACTUAL_COMPLIANCE,,}" = "${EXPECTED_COMPLIANCE,,}"
+test "$PAUSED" = "true"
 ```
 
 The first two returned addresses must match `EXPECTED_IR` and `EXPECTED_COMPLIANCE`; `paused()` should initially return `true`. These are read-only checks and do not unpause the token.
