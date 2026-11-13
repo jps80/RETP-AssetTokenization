@@ -101,12 +101,12 @@ En cualquier caso, las reglas societarias, la asignación autorizada, el control
 
 ## Requisitos funcionales
 
-FR-001 crear SPV; FR-002 configurar clase; FR-003 registrar inversores/wallets; FR-004 crear evento y suscripciones; FR-005 validar importes y unidades; FR-006 registrar evidencia/aprobación; FR-007 aprobar asignaciones; FR-008 desplegar token; FR-009 vincular ONCHAINID; FR-010 emitir claims; FR-011 preparar/aprobar mint; FR-012 firmar y enviar; FR-013 consultar transacciones; FR-014 conciliar; FR-015 consultar auditoría.
+FR-001 crear SPV; FR-002 configurar clase; FR-003 registrar inversores/wallets; FR-004 crear evento y suscripciones; FR-005 validar importes y unidades; FR-006 registrar evidencia/aprobación; FR-007 registrar formalización y actualización del Libro Registro de Socios; FR-008 aprobar asignaciones reflejadas en el registro; FR-009 desplegar token; FR-010 vincular ONCHAINID; FR-011 emitir claims; FR-012 preparar/aprobar mint; FR-013 firmar y enviar; FR-014 consultar transacciones; FR-015 conciliar; FR-016 consultar auditoría.
 
 ## Criterios de aceptación
 
 - AC-001 creación de SPV con una clase ordinaria.
-- AC-002 rechazo de asignaciones superiores al límite autorizado.
+- AC-002 rechazo de asignaciones superiores a las participaciones legalmente creadas y disponibles.
 - AC-003 bloqueo de mint sin evidencia/aprobación.
 - AC-004 rechazo de inversor no elegible.
 - AC-005 registro de chain ID y direcciones desplegadas.
@@ -120,7 +120,8 @@ FR-001 crear SPV; FR-002 configurar clase; FR-003 registrar inversores/wallets; 
 - AC-013 mint rechazado cuando el módulo de Compliance bloquea `canTransfer(address(0), to, amount)`.
 - AC-014 mint rechazado cuando el actor no es Agent.
 - AC-015 forced transfer no está disponible en la API ordinaria de v0.3.
-- AC-016 mint bloqueado si Corporate Registry no acredita la actualización del Libro Registro de Socios.
+- AC-016 mint bloqueado si Corporate Registry no acredita la actualización del Libro Registro de Socios para cada asignación y cantidad.
+- AC-017 cada TokenAllocation queda vinculada a una CorporateRegisterEntry completada.
 
 ## Persistencia y API
 
