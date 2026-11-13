@@ -1,4 +1,3 @@
-import { Type } from 'class-transformer';
 import { IsDateString, IsIn, IsNotEmpty, IsNumberString, IsOptional, IsString, Length, Matches, MaxLength, MinLength } from 'class-validator';
 
 export class CreateSpvDto {
