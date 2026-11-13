@@ -1,4 +1,4 @@
-import { IsDateString, IsIn, IsNotEmpty, IsNumberString, IsOptional, IsString, Length, Matches, MaxLength, MinLength } from 'class-validator';
+import { IsDateString, IsIn, IsNotEmpty, IsNumberString, IsOptional, IsString, Length, Matches, MaxLength } from 'class-validator';
 
 export class CreateSpvDto {
   @IsString()
@@ -29,11 +29,11 @@ export class CreateSpvDto {
   capitalClassName!: string;
 
   @IsNumberString()
-  @Matches(/^(?:0|[1-9]\\d{0,17})(?:\\.\\d{1,2})?$/)
+  @Matches(/^(?:0|[1-9]\d{0,17})(?:\.\d{1,2})?$/)
   nominalValue!: string;
 
   @IsString()
-  @Matches(/^[1-9]\\d{0,18}$/)
+  @Matches(/^[1-9]\d{0,18}$/)
   legallyCreatedUnits!: string;
 
   @IsOptional()
