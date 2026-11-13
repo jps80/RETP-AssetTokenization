@@ -42,6 +42,15 @@ describe('SpvsService', () => {
     expect(result.capitalEvents).toHaveLength(1);
   });
 
+  it('rejects units outside the PostgreSQL BIGINT range', async () => {
+    await expect(service.create({
+      code: 'RETP001', name: 'Test', jurisdiction: 'ES', legalForm: 'SL',
+      capitalClassCode: 'ORDINARY', capitalClassName: 'Ordinary',
+      nominalValue: '50.00', legallyCreatedUnits: '9223372036854775808',
+    })).rejects.toBeInstanceOf(ConflictException);
+    expect(prisma.$transaction).not.toHaveBeenCalled();
+  });
+
   it('rejects zero nominal value before persistence', async () => {
     await expect(service.create({
       code: 'RETP001', name: 'Test', jurisdiction: 'ES', legalForm: 'SL',
