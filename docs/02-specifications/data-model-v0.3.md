@@ -52,6 +52,9 @@ erDiagram
   SUBSCRIPTION ||--o{ ALLOCATION : "origina"
   INVESTOR ||--o{ ALLOCATION : "beneficiario"
   CAPITAL_EVENT ||--o{ LEGAL_EVIDENCE : "evidencia"
+  CAPITAL_EVENT ||--o{ CORPORATE_REGISTER_UPDATE : "actualiza registro"
+  CORPORATE_REGISTER_UPDATE ||--o{ CORPORATE_REGISTER_ENTRY : "incluye"
+  ALLOCATION ||--o{ CORPORATE_REGISTER_ENTRY : "queda inscrita"
   INVESTOR ||--o{ WALLET : "controla"
   INVESTOR ||--o{ ONCHAIN_IDENTITY : "tiene"
   ONCHAIN_IDENTITY ||--o{ CLAIM : "contiene"
@@ -134,12 +137,17 @@ No incluir nombre legal, documento identificativo, domicilio o fecha de nacimien
 ### 4.4 Corporate Registry
 
 **CorporateRegisterUpdate**
-- `id`, `spvId`, `capitalEventId`, `status`.
+- `id`, `spvId`, `capitalEventId`, `status`: PENDING / COMPLETED / REJECTED / SUPERSEDED.
 - `effectiveAt`, `recordedAt`, `recordedBy`, `registerReference`.
 - `legalEvidenceId` o relación explícita con la evidencia societaria que soporta la inscripción.
-- `registeredUnits`: BigInt; unidades que constan en el registro tras el acto.
 - `contentHash` opcional para identificar el extracto sintético, sin tratar el hash como prueba jurídica suficiente.
-- La emisión de tokens requiere una actualización completada y vinculada a las asignaciones correspondientes.
+- Una actualización completada contiene una o varias CorporateRegisterEntry; no basta con registrar un total agregado.
+
+**CorporateRegisterEntry**
+- `id`, `corporateRegisterUpdateId`, `allocationId`, `investorId`, `registeredUnits`: BigInt.
+- `registerEntryReference`, `effectiveAt`, `status`.
+- Unique: (`corporateRegisterUpdateId`, `allocationId`).
+- Identifica qué asignación y qué cantidad constan en el registro societario simulado.
 
 ### 4.5 DebtFacility
 
@@ -197,11 +205,11 @@ No asumir que todos los contratos se despliegan con el mismo patrón proxy/direc
 - timestamps.
 
 **TokenAllocation**
-- `id`, `tokenIssuanceId`, `allocationId`, `walletId`.
+- `id`, `tokenIssuanceId`, `allocationId`, `corporateRegisterEntryId`, `walletId`.
 - `units`, `mintedUnits`: BigInt.
 - `status`: PENDING / READY / SUBMITTED / MINTED / FAILED.
-- Unique: (`tokenIssuanceId`, `allocationId`).
-- El destinatario y las unidades se obtienen de una Allocation aprobada; no se confía en cantidades arbitrarias enviadas por el frontend.
+- Unique: (`tokenIssuanceId`, `allocationId`) y `corporateRegisterEntryId` dentro de la emisión.
+- El destinatario y las unidades se obtienen de una Allocation aprobada y de su CorporateRegisterEntry completada; no se confía en cantidades arbitrarias enviadas por el frontend.
 
 ### 4.9 BlockchainTransaction
 
