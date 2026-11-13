@@ -1,0 +1,81 @@
+name: retp-local
+
+services:
+  postgres:
+    image: postgres:16.4-bookworm
+    container_name: retp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: \${POSTGRES_DB:-retp}
+      POSTGRES_USER: \${POSTGRES_USER:-retp}
+      POSTGRES_PASSWORD: \${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:\${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \${POSTGRES_USER:-retp} -d \${POSTGRES_DB:-retp}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  rabbitmq:
+    image: rabbitmq:3.13.7-management
+    container_name: retp-rabbitmq
+    restart: unless-stopped
+    hostname: retp-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: \${RABBITMQ_DEFAULT_USER:-retp}
+      RABBITMQ_DEFAULT_PASS: \${RABBITMQ_DEFAULT_PASS:?Set RABBITMQ_DEFAULT_PASS in .env}
+    ports:
+      - "127.0.0.1:\${RABBITMQ_AMQP_PORT:-5672}:5672"
+      - "127.0.0.1:\${RABBITMQ_UI_PORT:-15672}:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  anvil:
+    image: ghcr.io/foundry-rs/foundry:v1.0.0
+    container_name: retp-anvil
+    restart: unless-stopped
+    entrypoint: ["anvil"]
+    command:
+      - "--host"
+      - "0.0.0.0"
+      - "--chain-id"
+      - "31337"
+      - "--accounts"
+      - "10"
+      - "--balance"
+      - "10000"
+      - "--block-time"
+      - "1"
+    ports:
+      - "127.0.0.1:\${ANVIL_PORT:-8545}:8545"
+
+  softhsm2:
+    profiles: ["signing-lab"]
+    build:
+      context: ./softhsm
+    container_name: retp-softhsm2
+    restart: unless-stopped
+    environment:
+      SOFTHSM2_CONF: /etc/softhsm2.conf
+    volumes:
+      - softhsm_tokens:/var/lib/softhsm/tokens
+    healthcheck:
+      test: ["CMD-SHELL", "softhsm2-util --show-slots >/dev/null 2>&1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  rabbitmq_data:
+  softhsm_tokens:
