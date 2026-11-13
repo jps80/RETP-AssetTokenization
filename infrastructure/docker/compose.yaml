@@ -6,7 +6,7 @@ services:
     container_name: retp-postgres-v03
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-retp}
+      POSTGRES_DB: ${POSTGRES_DB:-retp-postgres}
       POSTGRES_USER: ${POSTGRES_USER:-retp}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
     ports:
@@ -14,7 +14,7 @@ services:
     volumes:
       - retp_postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-retp} -d ${POSTGRES_DB:-retp}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-retp} -d ${POSTGRES_DB:-retp-postgres}"]
       interval: 5s
       timeout: 5s
       retries: 20
