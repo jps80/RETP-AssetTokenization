@@ -32,13 +32,14 @@ Fuera de alcance: mercado secundario, KYC real, custodia productiva, despliegue 
 | 001 | Monolito modular NestJS |
 | 002 | PostgreSQL + Prisma como persistencia operacional |
 | 003 | ERC-3643 como estándar objetivo |
-| 004 | Suite T-REX de referencia; versión exacta por fijar |
+| 004 | Suite oficial ERC-3643/ERC-3643; candidato de evaluación 4.1.3 |
 | 005 | `decimals = 0` |
 | 006 | Token como espejo técnico auxiliar |
 | 007 | Mint solo mediante workflow autorizado |
 | 008 | Servicio de firma aislado |
 | 009 | Transactional Outbox + RabbitMQ |
 | 010 | Anvil primero, Sepolia después |
+| 011 | T-REX candidato 4.1.3; pin final y distribución sujetos a gates técnicos y de licencia |
 
 ## Arquitectura lógica
 
@@ -48,9 +49,21 @@ El backend de negocio no accede directamente a claves privadas. El servicio aisl
 
 ## Componentes ERC-3643
 
-La implementación partirá de la suite T-REX compatible con ERC-3643. Se fijarán tag/commit, compilador Solidity, dependencias, licencia y despliegue antes de programar. Se verificarán Token, Identity Registry, Trusted Issuers Registry, Claim Topics Registry, Compliance, ONCHAINID y factory/deployer según la versión concreta.
+La implementación candidata es la suite del repositorio oficial `ERC-3643/ERC-3643`, paquete `@erc3643org/erc-3643@4.1.3`. El repositorio histórico `TokenySolutions/T-REX` está archivado. La configuración observada declara Solidity 0.8.17 y optimizer 200 runs. La compilación, tests, pin de commit y lockfile aún están pendientes.
+
+Se verificarán Token, Identity Registry, Identity Registry Storage, Trusted Issuers Registry, Claim Topics Registry, Compliance y ONCHAINID, junto con los mecanismos concretos de despliegue y roles de la versión fijada.
 
 Los topics KYC/AML usados en pruebas serán convenciones internas del laboratorio, no códigos regulatorios universales. No se almacenarán documentos ni datos personales en blockchain.
+
+La suite consultada declara GPL-3.0, frente a Apache-2.0 en RETP. No se copiará código ni se decidirá una forma de distribución hasta completar la revisión de licencias.
+
+## Semántica de operaciones: verificación por versión
+
+En el `Token.sol` consultado de la suite actual, `mint` exige rol Agent, verifica al destinatario con Identity Registry y llama a `Compliance.canTransfer(address(0), to, amount)` antes de acuñar y notificar `created`. La transferencia ordinaria también verifica identidad y Compliance. La función privilegiada `forcedTransfer` tiene una semántica diferente.
+
+La documentación general histórica de EIP-3643 no describe exactamente la misma ruta para mint. Por tanto, el comportamiento deberá probarse sobre el commit fijado, sin extrapolar de documentación de otra versión.
+
+En cualquier caso, las reglas societarias, la asignación autorizada, el control maker-checker y la idempotencia se validan en RETP antes de solicitar la firma. Los checks on-chain son una capa adicional, no sustituyen el workflow de negocio.
 
 ## Workflow de emisión
 
@@ -64,7 +77,7 @@ Los topics KYC/AML usados en pruebas serán convenciones internas del laboratori
 8. Desplegar/configurar T-REX.
 9. Vincular ONCHAINID y wallet.
 10. Emitir claims sintéticos desde Trusted Issuer.
-11. Preparar mint y someterlo a política.
+11. Preparar mint y someterlo a policy.
 12. Obtener maker-checker.
 13. Firmar y enviar transacción.
 14. Confirmar y registrar receipt/eventos.
@@ -82,6 +95,8 @@ Los topics KYC/AML usados en pruebas serán convenciones internas del laboratori
 - Timeout exige consulta de red antes de reintento.
 - La deuda no forma parte del cap table.
 - El token no determina titularidad jurídica.
+- La llamada de mint debe superar la comprobación de identidad y Compliance de la implementación fijada.
+- Las funciones privilegiadas de agente no se expondrán como operaciones ordinarias de usuario.
 
 ## Requisitos funcionales
 
@@ -101,6 +116,9 @@ FR-001 crear SPV; FR-002 configurar clase; FR-003 registrar inversores/wallets; 
 - AC-010 conciliación detecta diferencias.
 - AC-011 deuda no altera cap table.
 - AC-012 UI separa estado societario y estado técnico.
+- AC-013 mint rechazado cuando el módulo de Compliance bloquea `canTransfer(address(0), to, amount)`.
+- AC-014 mint rechazado cuando el actor no es Agent.
+- AC-015 forced transfer no está disponible en la API ordinaria de v0.3.
 
 ## Persistencia y API
 
@@ -112,7 +130,9 @@ Son propuestas, no APIs implementadas.
 
 ## Riesgos y verificaciones
 
-- Compatibilidad T-REX/toolchain y licencias.
+- Correspondencia paquete 4.1.3 / commit de fuente.
+- Compilación reproducible, lockfile y tests.
+- Licencia GPL-3.0 y forma de distribución.
 - Roles administrativos y claves.
 - SoftHSM2/PKCS#11 con secp256k1.
 - Reorgs y confirmaciones.
