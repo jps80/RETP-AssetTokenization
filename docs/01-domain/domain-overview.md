@@ -37,19 +37,20 @@ En v0.3 estos límites se implementarán principalmente como módulos de un mono
 
 1. Las asignaciones no superan las unidades autorizadas.
 2. Una asignación requiere evidencia y aprobación conforme a la política societaria definida.
-3. Una TokenAllocation referencia una asignación societaria aprobada.
-4. Solo inversores elegibles reciben tokens.
-5. El total acuñado no supera el total autorizado.
-6. Los reintentos no duplican acuñaciones.
-7. Los hechos blockchain confirmados se conservan en el historial.
-8. La deuda no forma parte del cap table.
-9. Las correcciones son auditables; no se borra el historial.
-10. El saldo on-chain no sustituye el libro registro de socios.
+3. Antes de tokenizar, Corporate Registry debe registrar la formalización y actualización del Libro Registro de Socios.
+4. Una TokenAllocation referencia una asignación societaria aprobada y registrada.
+5. Solo inversores elegibles reciben tokens.
+6. El total acuñado no supera las unidades societarias legalmente creadas y asignadas.
+7. Los reintentos no duplican acuñaciones.
+8. Los hechos blockchain confirmados se conservan en el historial.
+9. La deuda no forma parte del cap table.
+10. Las correcciones son auditables; no se borra el historial.
+11. El saldo on-chain no sustituye el Libro Registro de Socios.
 
 ## Estados separados
 
 Suscripción:
-`DRAFT → SUBMITTED → COMPLIANCE_PENDING → COMPLIANCE_APPROVED → PAYMENT_PENDING → PAYMENT_CONFIRMED → CORPORATE_APPROVAL_PENDING → CORPORATE_APPROVED → ALLOCATION_PENDING → ALLOCATED`.
+`DRAFT → SUBMITTED → COMPLIANCE_PENDING → COMPLIANCE_APPROVED → PAYMENT_PENDING → PAYMENT_CONFIRMED → CORPORATE_APPROVAL_PENDING → CORPORATE_APPROVED → ALLOCATION_PENDING → ALLOCATED → CORPORATE_REGISTER_UPDATE_PENDING → CORPORATE_REGISTER_UPDATED`.
 
 Emisión:
 `DRAFT → VALIDATED → APPROVED → DEPLOYMENT_PENDING → DEPLOYED → IDENTITY_SETUP_PENDING → IDENTITIES_READY → MINT_PENDING → MINT_SUBMITTED → MINT_CONFIRMED → RECONCILIATION_PENDING → RECONCILED`.
