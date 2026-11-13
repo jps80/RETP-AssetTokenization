@@ -134,4 +134,4 @@ The next iteration adds Foundry tests for identity eligibility, mint authorizati
 
 ## 7. License boundary
 
-The ERC-3643 source is GPL-3.0 and remains a separately identifiable Git submodule. RETP integration code in this workspace is Apache-2.0. Preserve all upstream notices and obtain legal review before distributing a combined work or compiled artifacts.
+The ERC-3643 source repository declares GPL-3.0 and remains a separately identifiable Git submodule. Note that the ONCHAINID GitHub repository declares GPL-3.0 while its npm package 2.2.1 metadata declares ISC; preserve the notices from the exact package/source actually used and have this discrepancy reviewed. RETP integration code in this workspace is Apache-2.0. Obtain legal review before distributing a combined work or compiled artifacts.
