@@ -6,15 +6,15 @@ services:
     container_name: retp-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: \${POSTGRES_DB:-retp}
-      POSTGRES_USER: \${POSTGRES_USER:-retp}
-      POSTGRES_PASSWORD: \${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-retp}
+      POSTGRES_USER: ${POSTGRES_USER:-retp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
     ports:
-      - "127.0.0.1:\${POSTGRES_PORT:-5432}:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U \${POSTGRES_USER:-retp} -d \${POSTGRES_DB:-retp}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-retp} -d ${POSTGRES_DB:-retp}"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -26,11 +26,11 @@ services:
     restart: unless-stopped
     hostname: retp-rabbitmq
     environment:
-      RABBITMQ_DEFAULT_USER: \${RABBITMQ_DEFAULT_USER:-retp}
-      RABBITMQ_DEFAULT_PASS: \${RABBITMQ_DEFAULT_PASS:?Set RABBITMQ_DEFAULT_PASS in .env}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-retp}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:?Set RABBITMQ_DEFAULT_PASS in .env}
     ports:
-      - "127.0.0.1:\${RABBITMQ_AMQP_PORT:-5672}:5672"
-      - "127.0.0.1:\${RABBITMQ_UI_PORT:-15672}:15672"
+      - "127.0.0.1:${RABBITMQ_AMQP_PORT:-5672}:5672"
+      - "127.0.0.1:${RABBITMQ_UI_PORT:-15672}:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
@@ -57,7 +57,7 @@ services:
       - "--block-time"
       - "1"
     ports:
-      - "127.0.0.1:\${ANVIL_PORT:-8545}:8545"
+      - "127.0.0.1:${ANVIL_PORT:-8545}:8545"
 
   softhsm2:
     profiles: ["signing-lab"]
