@@ -1,0 +1,10 @@
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Runtime data and local secrets
+*.key
+*.pem
+*.p12
+*.pfx
