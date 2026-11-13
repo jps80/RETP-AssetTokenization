@@ -73,7 +73,7 @@ Los campos indicados son el baseline funcional; los nombres definitivos se refle
 
 ### 4.1 Party e Investor
 
-El backend foundation anterior ya introdujo `Party`. `Investor` debe ser un perfil de dominio asociado 1:1 a Party, no una segunda copia de sus atributos personales.
+La Backend Foundation v0.2 se entregó como artefacto separado, pero no está integrada ni verificada en este repositorio. La relación `Party`–`Investor` queda condicionada a comprobar el código que finalmente se incorpore. Si `Party` no existe o su semántica no es adecuada, se definirá el modelo base antes de crear `Investor`; no se presupone una entidad ya desplegada.
 
 **Investor**
 - `id`: UUID.
@@ -107,7 +107,8 @@ No incluir nombre legal, documento identificativo, domicilio o fecha de nacimien
 **CapitalEvent**
 - `id`, `spvId`, `capitalClassId`.
 - `eventType`: INITIAL_ISSUANCE en v0.3.
-- `authorizedUnits`: BigInt positivo.
+- `legallyCreatedUnits`: BigInt positivo, derivado del acto societario que crea las participaciones; no representa una autorización abstracta de capital.
+- `allocatedUnits`: BigInt calculado desde las asignaciones aprobadas; no se mantiene como dato maestro duplicado.
 - `status`: DRAFT / VALIDATED / APPROVED / EXECUTED / CANCELLED.
 - `effectiveDate`, timestamps.
 
@@ -123,14 +124,24 @@ No incluir nombre legal, documento identificativo, domicilio o fecha de nacimien
 - `id`, `subscriptionId`, `investorId`, `units`: BigInt.
 - `status`: PROPOSED / APPROVED / REJECTED / CANCELLED.
 - `approvedBy`, `approvedAt`, `approvalReference`.
-- La suma de asignaciones aprobadas debe respetar el límite autorizado del CapitalEvent.
+- La suma de asignaciones aprobadas no puede superar las participaciones legalmente creadas y disponibles en el CapitalEvent.
 
 **LegalEvidence**
 - `id`, `capitalEventId`, `evidenceType`, `externalReference`.
 - `contentHash`, `hashAlgorithm`, `status`, `recordedAt`.
 - En el laboratorio se guarda referencia y hash de evidencia sintética; no se suben documentos personales ni se interpreta el hash como prueba jurídica suficiente.
 
-### 4.4 DebtFacility
+### 4.4 Corporate Registry
+
+**CorporateRegisterUpdate**
+- `id`, `spvId`, `capitalEventId`, `status`.
+- `effectiveAt`, `recordedAt`, `recordedBy`, `registerReference`.
+- `legalEvidenceId` o relación explícita con la evidencia societaria que soporta la inscripción.
+- `registeredUnits`: BigInt; unidades que constan en el registro tras el acto.
+- `contentHash` opcional para identificar el extracto sintético, sin tratar el hash como prueba jurídica suficiente.
+- La emisión de tokens requiere una actualización completada y vinculada a las asignaciones correspondientes.
+
+### 4.5 DebtFacility
 
 **DebtFacility**
 - `id`, `spvId`, `lenderReference`, `currency`.
@@ -139,7 +150,7 @@ No incluir nombre legal, documento identificativo, domicilio o fecha de nacimien
 - `originationDate`, `maturityDate`, `repaymentProfile`, `status`.
 - No tiene relación con Allocation ni TokenAllocation. La deuda nunca incrementa el cap table.
 
-### 4.5 Wallet, OnchainIdentity y Claim
+### 4.6 Wallet, OnchainIdentity y Claim
 
 **Wallet**
 - `id`, `investorId`, `chainId`: BigInt.
@@ -159,7 +170,7 @@ No incluir nombre legal, documento identificativo, domicilio o fecha de nacimien
 - `revokedAt` opcional, `status`.
 - No guardar el payload personal del claim si no es imprescindible para la prueba.
 
-### 4.6 TokenDeployment y TokenContract
+### 4.7 TokenDeployment y TokenContract
 
 **TokenDeployment**
 - `id`, `spvId`, `chainId`.
@@ -176,12 +187,12 @@ No incluir nombre legal, documento identificativo, domicilio o fecha de nacimien
 
 No asumir que todos los contratos se despliegan con el mismo patrón proxy/direct implementation. El inventario reflejará los contratos reales devueltos por el deployer de la versión fijada.
 
-### 4.7 TokenIssuance y TokenAllocation
+### 4.8 TokenIssuance y TokenAllocation
 
 **TokenIssuance**
 - `id`, `capitalEventId`, `tokenDeploymentId`.
 - `status`: DRAFT / VALIDATION_PENDING / APPROVAL_PENDING / APPROVED / DEPLOYMENT_PENDING / DEPLOYED / IDENTITY_SETUP_PENDING / IDENTITIES_READY / MINT_PENDING / MINT_PARTIAL / MINTED / RECONCILIATION_PENDING / RECONCILED / DISCREPANCY / REJECTED.
-- `authorizedUnits`, `mintedUnits`: BigInt.
+- `legallyCreatedUnits`, `mintedUnits`: BigInt; `legallyCreatedUnits` se obtiene del evento societario/evidencia y no de un cupo abstracto.
 - `approvedBy`, `approvedAt`, `idempotencyKey` única.
 - timestamps.
 
@@ -192,7 +203,7 @@ No asumir que todos los contratos se despliegan con el mismo patrón proxy/direc
 - Unique: (`tokenIssuanceId`, `allocationId`).
 - El destinatario y las unidades se obtienen de una Allocation aprobada; no se confía en cantidades arbitrarias enviadas por el frontend.
 
-### 4.8 BlockchainTransaction
+### 4.9 BlockchainTransaction
 
 - `id`, `tokenIssuanceId`, `tokenDeploymentId`.
 - `operationType`: DEPLOY / IDENTITY_REGISTER / CLAIM_ISSUE / MINT.
@@ -203,7 +214,7 @@ No asumir que todos los contratos se despliegan con el mismo patrón proxy/direc
 - `idempotencyKey` única por comando.
 - No persistir private key, raw signing secret ni seed phrase.
 
-### 4.9 Reconciliation y ReconciliationLine
+### 4.10 Reconciliation y ReconciliationLine
 
 **Reconciliation**
 - `id`, `tokenIssuanceId`, `status`: RUNNING / RECONCILED / DISCREPANCY / FAILED.
@@ -265,11 +276,12 @@ La transición de negocio y la escritura del Outbox se harán en la misma transa
 3. No guardar el porcentaje de participación como dato maestro; calcularlo desde unidades válidas y denominador aplicable.
 4. No asociar DebtFacility a TokenAllocation.
 5. No crear TokenAllocation sin Allocation aprobada.
-6. No actualizar el saldo on-chain en PostgreSQL antes de receipt confirmado.
-7. No considerar un timeout como fallo definitivo.
-8. No volver a emitir si una transacción anterior tiene resultado indeterminado.
-9. No guardar claves ni datos KYC completos en tablas de tokenización.
-10. No usar el saldo del token como fuente de verdad de socios de la SL.
+6. No iniciar mint antes de que Corporate Registry acredite la actualización del Libro Registro de Socios.
+7. No actualizar el saldo on-chain en PostgreSQL antes de receipt confirmado.
+8. No considerar un timeout como fallo definitivo.
+9. No volver a emitir si una transacción anterior tiene resultado indeterminado.
+10. No guardar claves ni datos KYC completos en tablas de tokenización.
+11. No usar el saldo del token como fuente de verdad de socios de la SL.
 
 ## 9. Próximo paso de implementación
 
