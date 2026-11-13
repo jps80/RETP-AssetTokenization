@@ -27,7 +27,7 @@ Desde la raíz del repositorio:
 cp infrastructure/docker/.env.example infrastructure/docker/.env
 ```
 
-Edita `infrastructure/docker/.env` y sustituye las contraseñas de ejemplo. No uses estos valores en entornos compartidos o productivos.
+El ejemplo usa `retp_dev_password` para coincidir con `apps/api/.env.example` de la vertical I-01. Son credenciales públicas y débiles, exclusivamente para desarrollo local; no las uses en entornos compartidos o productivos. Si cambias la contraseña PostgreSQL, actualiza también `DATABASE_URL` de la API.
 
 ## Arranque
 
