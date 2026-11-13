@@ -31,15 +31,15 @@ Fuera de alcance: mercado secundario, KYC real, custodia productiva, despliegue 
 |---|---|
 | 001 | Monolito modular NestJS |
 | 002 | PostgreSQL + Prisma como persistencia operacional |
-| 003 | ERC-3643 como estándar objetivo |
-| 004 | Suite oficial ERC-3643/ERC-3643; candidato de evaluación 4.1.3 |
-| 005 | `decimals = 0` |
-| 006 | Token como espejo técnico auxiliar |
-| 007 | Mint solo mediante workflow autorizado |
-| 008 | Servicio de firma aislado |
-| 009 | Transactional Outbox + RabbitMQ |
+| 003 | Historial de movimientos para posiciones de capital |
+| 004 | Separación Capital Management / Token Management |
+| 005 | RabbitMQ + Transactional Outbox |
+| 006 | DebtFacility separado del cap table |
+| 007 | ERC-3643 como estándar objetivo |
+| 008 | Token como espejo técnico auxiliar |
+| 009 | Firma aislada, policy engine y maker-checker |
 | 010 | Anvil primero, Sepolia después |
-| 011 | T-REX candidato 4.1.3; pin final y distribución sujetos a gates técnicos y de licencia |
+| 011 | Suite oficial ERC-3643/ERC-3643; candidato 4.1.3, sujeto a gates técnicos y de licencia |
 
 ## Arquitectura lógica
 
@@ -81,13 +81,13 @@ En cualquier caso, las reglas societarias, la asignación autorizada, el control
 12. Obtener maker-checker.
 13. Firmar y enviar transacción.
 14. Confirmar y registrar receipt/eventos.
-15. Conciliar asignaciones y saldos.
-16. Cerrar técnicamente solo si se cumplen los criterios.
+16. Conciliar asignaciones y saldos.
+17. Cerrar técnicamente solo si se cumplen los criterios.
 
 ## Reglas
 
 - Una suscripción pagada no crea automáticamente una participación.
-- Una asignación sin evidencia/aprobación no inicia mint.
+- Una asignación sin evidencia/aprobación y sin constancia de actualización del Libro Registro de Socios no inicia mint.
 - Una TokenAllocation debe referenciar Allocation aprobada.
 - Solo identidades elegibles reciben tokens.
 - El total acuñado no supera el autorizado.
@@ -106,7 +106,7 @@ FR-001 crear SPV; FR-002 configurar clase; FR-003 registrar inversores/wallets; 
 
 - AC-001 creación de SPV con una clase ordinaria.
 - AC-002 rechazo de asignaciones superiores al límite autorizado.
-- AC-003 bloqueo de mint sin evidencia/aprobación.
+- AC-003 bloqueo de mint sin evidencia/aprobación y sin actualización registrada del Libro Registro de Socios.
 - AC-004 rechazo de inversor no elegible.
 - AC-005 registro de chain ID y direcciones desplegadas.
 - AC-006 asociación de mint con Allocation e idempotency key.
@@ -119,6 +119,7 @@ FR-001 crear SPV; FR-002 configurar clase; FR-003 registrar inversores/wallets; 
 - AC-013 mint rechazado cuando el módulo de Compliance bloquea `canTransfer(address(0), to, amount)`.
 - AC-014 mint rechazado cuando el actor no es Agent.
 - AC-015 forced transfer no está disponible en la API ordinaria de v0.3.
+- AC-016 mint bloqueado si Corporate Registry no acredita la actualización del Libro Registro de Socios.
 
 ## Persistencia y API
 
