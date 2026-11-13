@@ -1,0 +1,12 @@
+{
+  "name": "@retp/contracts",
+  "private": true,
+  "version": "0.3.0",
+  "description": "RETP Foundry workspace for the pinned official ERC-3643 implementation",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@onchain-id/solidity": "2.2.1",
+    "@openzeppelin/contracts": "4.9.6",
+    "@openzeppelin/contracts-upgradeable": "4.9.6"
+  }
+}

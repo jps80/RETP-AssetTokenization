@@ -7,8 +7,8 @@
 ## Decisión
 
 1. Usar como referencia la implementación oficial de https://github.com/ERC-3643/ERC-3643, fijada en el commit `2f0704dee9658ad9cd5b6ed82e7427da74c28345` (publicación npm observada: `@erc3643org/erc-3643@4.1.3`).
-2. Ejecutar su toolchain Hardhat upstream contra el nodo Anvil local (chain ID 31337).
-3. Desplegar localmente factory, implementaciones y suite ERC-3643; no utilizar direcciones de factory productivas ni wallets whitelisted de producción.
+2. Compilar y desplegar la fuente upstream mediante Foundry (Forge) contra el nodo Anvil local (chain ID 31337). Foundry es tooling de RETP; no se modifica ni se porta el código upstream.
+3. Desplegar localmente implementaciones y proxies oficiales ERC-3643 directamente. El primer smoke deployment no usa TREXFactory; si una iteración posterior adopta el flujo de factory, desplegará una TREXFactory local propia. Nunca utilizar direcciones de factory productivas ni wallets whitelisted de producción.
 4. Mantener el código de integración RETP (deployment orchestration, manifest, adapter, persistencia y tests de aceptación) separado de los contratos upstream.
 5. No modificar ni copiar selectivamente contratos upstream sin revisión técnica y jurídica específica.
 6. Tratar el balance on-chain como espejo técnico auxiliar; no sustituye el Libro Registro de Socios ni formalidades societarias españolas.
@@ -16,19 +16,20 @@
 ## Razones
 
 - La implementación upstream proporciona el comportamiento concreto que debe probarse; una implementación propia introduciría riesgos de divergencia con el estándar.
-- Hardhat minimiza las modificaciones necesarias para compilar y desplegar el repositorio oficial.
+- Foundry permite pruebas Solidity nativas, fuzzing e invariant testing. La compatibilidad de compilación con el commit upstream se validará sin modificar sus fuentes.
 - Anvil permite un ciclo EVM local reproducible sin depender de una red pública.
 - Un manifest de despliegue desacopla el proceso de despliegue de contratos del backend NestJS.
 
 ## Licencias y propiedad intelectual
 
-El repositorio oficial consultado declara GPL-3.0. RETP tiene licencia Apache-2.0. Esta diferencia no se debe ignorar ni resolver mediante una suposición de compatibilidad.
+El repositorio ERC-3643 declara GPL-3.0. RETP tiene licencia Apache-2.0. Además, el repositorio GitHub de ONCHAINID muestra licencia GPL-3.0 mientras que el package.json de la publicación npm 2.2.1 declara ISC. Esta discrepancia de metadatos debe resolverse mediante revisión de los artefactos efectivamente utilizados y sus avisos; no se debe inferir compatibilidad a partir de un único campo de licencia.
 
 Para el laboratorio:
 - conservar los avisos de copyright y licencia del upstream;
 - registrar el commit exacto y la procedencia de cada dependencia;
 - no relicenciar código GPL como Apache-2.0;
-- mantener los artefactos y código upstream identificables y separados del código propio.
+- mantener los artefactos y código upstream identificables y separados del código propio;
+- documentar por separado la procedencia y licencia declarada tanto del repositorio ONCHAINID como del paquete npm instalado.
 
 Antes de distribuir una combinación de código, artefactos compilados o producto que incorpore la implementación, realizar revisión jurídica de las obligaciones GPL-3.0 y de la forma concreta de integración. Esta ADR no constituye una opinión legal ni concluye que cualquier modalidad de linking/distribución sea compatible.
 
@@ -42,14 +43,14 @@ Positivas:
 
 Costes y riesgos:
 - dependencia del ciclo de releases upstream;
-- complejidad de mantener dos toolchains (NestJS y Hardhat);
+- complejidad de mantener el workspace Foundry y el backend NestJS;
 - obligaciones GPL-3.0 que deben evaluarse antes de distribución;
 - el despliegue local no equivale a auditoría ni certificación de seguridad.
 
 ## Verificación requerida
 
-- fijar Node, npm, Hardhat, solc y dependencias transitivas en lockfile;
-- compilar y ejecutar tests upstream en el commit fijado;
+- fijar commit upstream, Foundry, solc 0.8.17, optimizer 200 runs y dependencias Solidity/npm exactas en lockfiles;
+- compilar el commit fijado con Foundry y ejecutar tests de aceptación RETP; los tests upstream TypeScript/Hardhat podrán seguir ejecutándose en su entorno original;
 - comprobar bindings entre Token, Identity Registry y Compliance;
 - revisar semántica concreta de mint, freeze, pause, recovery y forced transfer;
 - guardar manifest de despliegue con chain ID y source commit;
