@@ -13,5 +13,6 @@
 | ADR-009 | Firma aislada, policy engine y maker-checker | Aceptada; viabilidad técnica pendiente |
 | ADR-010 | Anvil primero, Sepolia después | Aceptada |
 | [ADR-011](ADR-011-trex-version-and-integration.md) | ERC-3643/ERC-3643, candidato 4.1.3; pin final sujeto a validación | Aceptada con gates |
+| [ADR-012](ADR-012-erc3643-official-implementation.md) | Implementación oficial ERC-3643 fijada por commit y despliegue Hardhat sobre Anvil | Aceptada para laboratorio; revisión de licencia pendiente |
 
 Cada ADR detallado deberá incluir contexto, decisión, alternativas, consecuencias, riesgos y verificación. Estado: Proposed / Accepted / Superseded.
