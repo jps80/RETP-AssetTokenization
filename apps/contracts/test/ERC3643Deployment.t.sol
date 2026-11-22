@@ -176,7 +176,7 @@ contract ERC3643DeploymentTest is Test {
         bytes memory data = abi.encode("KYC_APPROVED");
         bytes32 dataHash = keccak256(abi.encode(IIdentity(address(investorIdentity)), KYC_CLAIM_TOPIC, data));
         bytes32 prefixedHash = keccak256(
-            abi.encodePacked("\\x19Ethereum Signed Message:\\n32", dataHash)
+            abi.encodePacked("\x19Ethereum Signed Message:\n32", dataHash)
         );
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(issuerSignerKey, prefixedHash);
         bytes memory signature = abi.encodePacked(r, s, v);
@@ -211,7 +211,7 @@ contract ERC3643DeploymentTest is Test {
         bytes memory data = abi.encode("KYC_APPROVED");
         bytes32 dataHash = keccak256(abi.encode(IIdentity(address(investorIdentity)), KYC_CLAIM_TOPIC, data));
         bytes32 prefixedHash = keccak256(
-            abi.encodePacked("\\x19Ethereum Signed Message:\\n32", dataHash)
+            abi.encodePacked("\x19Ethereum Signed Message:\n32", dataHash)
         );
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(issuerSignerKey, prefixedHash);
         bytes memory signature = abi.encodePacked(r, s, v);
