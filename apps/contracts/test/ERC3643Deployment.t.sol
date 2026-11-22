@@ -20,6 +20,7 @@ import {IdentityRegistryProxy} from "ERC3643/contracts/proxy/IdentityRegistryPro
 import {ModularComplianceProxy} from "ERC3643/contracts/proxy/ModularComplianceProxy.sol";
 import {TokenProxy} from "ERC3643/contracts/proxy/TokenProxy.sol";
 import {IIdentity} from "@onchain-id/solidity/contracts/interface/IIdentity.sol";
+import {IIdentityRegistryStorage} from "ERC3643/contracts/registry/interface/IIdentityRegistryStorage.sol";
 
 /// @notice Integration smoke tests against the pinned official ERC-3643 proxy suite.
 /// @dev The empty claim-topic registry makes any registered non-zero identity eligible.
@@ -82,7 +83,7 @@ contract ERC3643DeploymentTest is Test {
         // The Identity Registry must be bound as an agent of its storage.
         // Otherwise registerIdentity() reaches IdentityRegistryStorage.addIdentityToStorage()
         // and reverts with AgentRole: caller does not have the Agent role.
-        irs.bindIdentityRegistry(address(ir));
+        IIdentityRegistryStorage(address(irs)).bindIdentityRegistry(address(ir));
 
         // The test contract owns the proxies because it deployed them.
         identityRegistry.addAgent(address(this));
