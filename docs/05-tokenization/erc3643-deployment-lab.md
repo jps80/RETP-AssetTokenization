@@ -12,8 +12,8 @@ I-03 establishes a reproducible local deployment of the official ERC-3643/T-REX 
 | Upstream commit | `2f0704dee9658ad9cd5b6ed82e7427da74c28345` |
 | Published npm package | `@erc3643org/erc-3643@4.1.3` |
 | Solidity pragma observed in Token.sol | `0.8.17` |
-| OpenZeppelin dependency observed upstream | `4.8.3` |
-| ONCHAINID Solidity dependency observed upstream | `^2.0.0` |
+| OpenZeppelin dependency resolved by upstream package-lock | `4.9.6` |
+| ONCHAINID Solidity dependency resolved by upstream package-lock | `2.2.1` |
 | Upstream license | GPL-3.0 |
 
 The upstream repository is the official ERC-3643 organisation's implementation. The older TokenySolutions/T-REX repository is archived and is not the selected source.
@@ -22,15 +22,16 @@ The commit SHA, rather than a moving branch or tag, is the immutable source refe
 
 ## Toolchain decision
 
-Use the upstream Hardhat toolchain for compiling and deploying the official contracts, and use the existing Anvil service as the local EVM JSON-RPC node. Do not port the upstream contracts to Foundry or rewrite them for this exercise.
+Use Foundry (Forge) as RETP's contract workspace and the existing Anvil service as the local EVM JSON-RPC node. The upstream source remains unchanged and is pinned as a Git submodule. Foundry is used to compile and deploy that source; this is not a port or rewrite.
 
 Reasons:
-- the official repository itself uses Hardhat;
-- this avoids changing the build system of the upstream Solidity suite;
+- Foundry provides Solidity-native tests, fuzzing and invariant testing for RETP-specific acceptance criteria;
+- Anvil is compatible with Foundry scripts and remains an independent JSON-RPC node;
+- the upstream Hardhat project and its TypeScript tests remain intact and can still be run in their original environment;
 - Anvil is an EVM node and does not require the deployment framework to be Foundry;
 - the RETP application remains independent of the upstream build system and consumes deployment manifests and contract ABIs/addresses.
 
-The exact Hardhat, Solidity compiler and Node dependency graph must be locked in the contract workspace lockfile. The upstream repository currently declares Hardhat 2.x and Solidity sources with pragma 0.8.17; the final compiler configuration must be verified against the pinned commit before deployment.
+The pinned upstream `package-lock.json` resolves `@onchain-id/solidity` to 2.2.1 and OpenZeppelin packages to 4.9.6, despite broader semver ranges in `package.json`. The upstream Hardhat config specifies solc 0.8.17 with optimizer enabled and 200 runs. RETP's Foundry workspace must pin these resolved versions and reproduce the compiler settings.
 
 ## Deployment scope
 
