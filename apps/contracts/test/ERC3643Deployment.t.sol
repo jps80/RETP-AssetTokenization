@@ -181,6 +181,7 @@ contract ERC3643DeploymentTest is Test {
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(issuerSignerKey, prefixedHash);
         bytes memory signature = abi.encodePacked(r, s, v);
 
+        vm.prank(address(0x155E));
         issuer.revokeClaimBySignature(signature);
 
         assertFalse(identityRegistry.isVerified(investor));
