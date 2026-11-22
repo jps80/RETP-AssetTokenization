@@ -79,6 +79,11 @@ contract ERC3643DeploymentTest is Test {
         compliance = ModularCompliance(address(mc));
         token = Token(address(tokenProxy));
 
+        // The Identity Registry must be bound as an agent of its storage.
+        // Otherwise registerIdentity() reaches IdentityRegistryStorage.addIdentityToStorage()
+        // and reverts with AgentRole: caller does not have the Agent role.
+        irs.bindIdentityRegistry(address(ir));
+
         // The test contract owns the proxies because it deployed them.
         identityRegistry.addAgent(address(this));
         token.addAgent(address(this));
